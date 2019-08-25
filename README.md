@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/marijansikic1992/Path-Following-Algorithm.svg?style=svg)](https://circleci.com/gh/marijansikic1992/Path-Following-Algorithm)
 
 # Path Following Algorithm #
 
