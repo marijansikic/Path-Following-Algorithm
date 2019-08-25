@@ -11,11 +11,11 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
     private val mutableLiveData = MutableLiveData<MainActivityState>()
     val liveData: LiveData<MainActivityState> = mutableLiveData
 
-    private var arr = mutableListOf<Char>()
+    private lateinit var path: String
+    private lateinit var letters: String
+    private lateinit var visitedFields: MutableList<Pair<Int, Int>>
+
     private var lastTraversal = START
-    private var path: String = ""
-    private var letters: String = ""
-    private var visitedFields = mutableListOf<Pair<Int, Int>>()
 
     override fun onChanged(newValue: String) {
         calculateAlgorithm(newValue)
@@ -27,11 +27,10 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
     }
 
     private fun reset() {
-        arr = mutableListOf<Char>()
         lastTraversal = START
-        path = ""
-        letters = ""
-        visitedFields = mutableListOf<Pair<Int, Int>>()
+        path = String.empty
+        letters = String.empty
+        visitedFields = mutableListOf()
     }
 
     fun fetchAsciiMap(mapType: String) {
@@ -44,19 +43,20 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
         val firstElement = findFirstElement(matrix)
 
         calculatePossibleRoutes(matrix, firstElement)
-        print("$path $letters")
 
-        if (path.first() == POI.START.value && path.last() == POI.END.value) {
+        if (path.first() == POI.START.value
+            && path.last() == POI.END.value
+        ) {
             mutableLiveData.value =
                 MainActivityState.Loaded(
-                    asciiMap = asciiMap.replace(" ", "*"),
+                    asciiMap = asciiMap.replaceBlanks(),
                     path = path,
                     letters = letters
                 )
         } else {
             mutableLiveData.value =
                 MainActivityState.Invalid(
-                    asciiMap = asciiMap.replace(" ", "*"),
+                    asciiMap = asciiMap.replaceBlanks(),
                     path = path,
                     letters = letters
                 )
@@ -72,7 +72,7 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
 
         if (elementPosition.first - 1 >= 0
             && elementPosition.second < matrix[elementPosition.first - 1].size
-            && matrix[elementPosition.first - 1][elementPosition.second].toString().matches("[A-W-+|x]".toRegex())
+            && matrix[elementPosition.first - 1][elementPosition.second].matchesPOI()
             && lastTraversal != DOWN
             && currentElement != POI.HORIZONTAL_LINE.value
         ) {
@@ -80,26 +80,23 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
 
         } else if (elementPosition.first + 1 < matrix.size
             && elementPosition.second < matrix[elementPosition.first + 1].size
-            && matrix[elementPosition.first + 1][elementPosition.second].toString().matches(
-                "[A-W-+|x]".toRegex()
-            ) && lastTraversal != UP
+            && matrix[elementPosition.first + 1][elementPosition.second].matchesPOI()
+            && lastTraversal != UP
             && currentElement != POI.HORIZONTAL_LINE.value
         ) {
             traverseIntoDirection(matrix, elementPosition, DOWN)
 
         } else if (elementPosition.second - 1 < matrix[elementPosition.first].size
             && elementPosition.second > 0
-            && matrix[elementPosition.first][elementPosition.second - 1].toString().matches(
-                "[A-W-+|x]".toRegex()
-            ) && lastTraversal != RIGHT
+            && matrix[elementPosition.first][elementPosition.second - 1].matchesPOI()
+            && lastTraversal != RIGHT
             && currentElement != POI.VERTICAL_LINE.value
         ) {
             traverseIntoDirection(matrix, elementPosition, LEFT)
 
         } else if (elementPosition.second + 1 < matrix[elementPosition.first].size
-            && matrix[elementPosition.first][elementPosition.second + 1].toString().matches(
-                "[A-W-+|x]".toRegex()
-            ) && lastTraversal != LEFT
+            && matrix[elementPosition.first][elementPosition.second + 1].matchesPOI()
+            && lastTraversal != LEFT
             && currentElement != POI.VERTICAL_LINE.value
         ) {
             traverseIntoDirection(matrix, elementPosition, RIGHT)
@@ -122,25 +119,19 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
                         )
                     )
                 ) {
-                    print("Visited")
 
                     path += matrix[elementPosition.first - 1][elementPosition.second]
                     element = matrix[elementPosition.first - 2][elementPosition.second]
                     visitedFields.add(Pair(elementPosition.first - 2, elementPosition.second))
-                    arr.add(matrix[elementPosition.first - 2][elementPosition.second])
 
                     mapElementToValue(element)
 
-                    println(arr)
                     lastTraversal = UP
                     calculatePossibleRoutes(
                         matrix,
                         elementPosition.copy(first = elementPosition.first - 2)
                     )
                 } else {
-                    print("NOT Visited")
-                    arr.add(matrix[elementPosition.first - 1][elementPosition.second])
-                    println(arr)
                     element = matrix[elementPosition.first - 1][elementPosition.second]
                     visitedFields.add(Pair(elementPosition.first - 1, elementPosition.second))
                     mapElementToValue(element)
@@ -162,30 +153,24 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
                         )
                     )
                 ) {
-                    print("Visited")
 
                     path += matrix[elementPosition.first + 1][elementPosition.second]
                     element = matrix[elementPosition.first + 2][elementPosition.second]
                     visitedFields.add(Pair(elementPosition.first + 2, elementPosition.second))
-                    arr.add(matrix[elementPosition.first + 2][elementPosition.second])
 
                     mapElementToValue(element)
 
-                    println(arr)
                     lastTraversal = DOWN
                     calculatePossibleRoutes(
                         matrix,
                         elementPosition.copy(first = elementPosition.first + 2)
                     )
                 } else {
-                    print("NOT Visited")
                     element = matrix[elementPosition.first + 1][elementPosition.second]
                     visitedFields.add(Pair(elementPosition.first + 1, elementPosition.second))
-                    arr.add(matrix[elementPosition.first + 1][elementPosition.second])
 
                     mapElementToValue(element)
 
-                    println(arr)
                     lastTraversal = DOWN
                     calculatePossibleRoutes(
                         matrix,
@@ -201,29 +186,24 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
                         )
                     )
                 ) {
-                    print("Visited")
 
                     path += matrix[elementPosition.first][elementPosition.second - 1]
                     element = matrix[elementPosition.first][elementPosition.second - 2]
                     visitedFields.add(Pair(elementPosition.first, elementPosition.second - 2))
-                    arr.add(matrix[elementPosition.first][elementPosition.second - 2])
 
                     mapElementToValue(element)
 
-                    println(arr)
                     lastTraversal = LEFT
                     calculatePossibleRoutes(
                         matrix,
                         elementPosition.copy(second = elementPosition.second - 2)
                     )
                 } else {
-                    print("NOT Visited")
+
                     element = matrix[elementPosition.first][elementPosition.second - 1]
                     visitedFields.add(Pair(elementPosition.first, elementPosition.second - 1))
                     mapElementToValue(element)
 
-                    arr.add(matrix[elementPosition.first][elementPosition.second - 1])
-                    println(arr)
                     lastTraversal = LEFT
 
                     calculatePossibleRoutes(
@@ -240,31 +220,25 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
                         )
                     )
                 ) {
-                    print("Visited")
 
                     path += matrix[elementPosition.first][elementPosition.second + 1]
                     element = matrix[elementPosition.first][elementPosition.second + 2]
                     visitedFields.add(Pair(elementPosition.first, elementPosition.second + 2))
-                    arr.add(matrix[elementPosition.first][elementPosition.second + 2])
 
                     mapElementToValue(element)
 
-                    println(arr)
                     lastTraversal = RIGHT
                     calculatePossibleRoutes(
                         matrix,
                         elementPosition.copy(second = elementPosition.second + 2)
                     )
                 } else {
-                    print("NOT Visited")
                     element = matrix[elementPosition.first][elementPosition.second + 1]
                     visitedFields.add(Pair(elementPosition.first, elementPosition.second + 1))
                     mapElementToValue(element)
 
-                    arr.add(matrix[elementPosition.first][elementPosition.second + 1])
                     lastTraversal = RIGHT
 
-                    println(arr)
                     calculatePossibleRoutes(
                         matrix,
                         elementPosition.copy(second = elementPosition.second + 1)
@@ -282,7 +256,7 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
            we sacrifice minimum performance for better readability
         * */
         path += element
-        if (element.toString().matches("[A-Z]".toRegex())) {
+        if (element.matchesLetters()) {
             letters += element
         }
     }

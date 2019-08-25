@@ -22,6 +22,12 @@ class MainActivityViewModelTestMap4 : BaseTestClass() {
                 "*****|************R****\n" +
                 "*****+------------L****\n"
 
+private val invalidAsciiMap =
+        "xT------S\n" +
+        "    |\n" +
+        "    " +
+                "|\n" +
+        "  @--T------E"
 
     @Test
     fun shouldShowLoadedStateMap4_ProperFormat() {
@@ -37,6 +43,15 @@ class MainActivityViewModelTestMap4 : BaseTestClass() {
                 path = "@----+|H---E||L|+--------L|+---------+||O---+WORL------------+||+-+|-|Dx",
                 letters = "HELLOWORLD"
             )
+        )
+    }
+
+    @Test
+    fun shouldShowLoadedStateCustom_ImproperFormat() {
+        mainActivityViewModel.fetchAsciiMap(invalidAsciiMap)
+        assertThat(
+            mainActivityViewModel.liveData.value,
+            IsInstanceOf(MainActivityState.Invalid::class.java)
         )
     }
 }

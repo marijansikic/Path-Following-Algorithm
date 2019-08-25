@@ -1,11 +1,7 @@
 package com.sikic.pathfollowingalgorithm
 
-import android.net.Uri
-import androidx.annotation.VisibleForTesting
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import java.io.File
 
 object MapRepository {
 
@@ -67,9 +63,7 @@ object MapRepository {
         }
     }
 
-    private fun readFileFromUri(uriPath: String?) {
-
-        mutableLiveData.value = File(uriPath).readText()
-
+    private fun readFileFromUri(customMap: String) {
+        mutableLiveData.value = customMap
     }
 }

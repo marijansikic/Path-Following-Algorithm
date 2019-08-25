@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.sikic.pathfollowingalgorithm.AsciiMapType.*
 import kotlinx.android.synthetic.main.activity_main.*
 
+private const val READ_REQUEST_CODE: Int = 10
 
 class MainActivity : AppCompatActivity() {
 
-    private val READ_REQUEST_CODE: Int = 10
     private lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,12 @@ class MainActivity : AppCompatActivity() {
         tvPath.text = getString(R.string.algorithm_path, path)
         tvLetters.text = getString(R.string.letters_path, letters)
 
-        Toast.makeText(this, getString(R.string.invalid_format), Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            getString(R.string.invalid_format),
+            Toast.LENGTH_LONG
+        )
+            .show()
     }
 
     private fun showSourceDialog() {
@@ -87,7 +92,14 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             resultData?.data?.also {
-//                viewModel.fetchAsciiMap(it)
+                if (it.scheme.equals("content")) {
+                    val inputStream = contentResolver.openInputStream(it)
+                    if (inputStream != null) {
+                        viewModel.fetchAsciiMap(
+                            String(inputStream.readBytes())
+                        )
+                    }
+                }
             }
         }
     }
