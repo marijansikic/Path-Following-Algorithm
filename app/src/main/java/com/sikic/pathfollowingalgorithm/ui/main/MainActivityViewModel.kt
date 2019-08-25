@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.sikic.pathfollowingalgorithm.*
 import com.sikic.pathfollowingalgorithm.data.MapRepository
+import com.sikic.pathfollowingalgorithm.empty
+import com.sikic.pathfollowingalgorithm.matchesLetters
+import com.sikic.pathfollowingalgorithm.matchesPOI
+import com.sikic.pathfollowingalgorithm.replaceBlanks
 import com.sikic.pathfollowingalgorithm.ui.main.Traversal.*
 
 class MainActivityViewModel : ViewModel(), Observer<String> {
@@ -41,11 +44,25 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
     }
 
     private fun calculateAlgorithm(asciiMap: String) {
-        val matrix = convertMapToMatrix(asciiMap)
-        val firstElement = findFirstElement(matrix)
 
-        calculatePossibleRoutes(matrix, firstElement)
+        try {
+            val matrix = convertMapToMatrix(asciiMap)
+            val firstElement = findFirstElement(matrix)
 
+            calculatePossibleRoutes(matrix, firstElement)
+
+        } catch (exception: ArrayIndexOutOfBoundsException) {
+            mutableLiveData.value =
+                MainActivityState.Invalid(
+                    asciiMap = asciiMap.replaceBlanks(),
+                    path = path,
+                    letters = letters
+                )
+        }
+        handlePathFormatData(asciiMap)
+    }
+
+    private fun handlePathFormatData(asciiMap: String) {
         if (path.first() == POI.START.value
             && path.last() == POI.END.value
         ) {
@@ -97,6 +114,7 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
             traverseIntoDirection(matrix, elementPosition, LEFT)
 
         } else if (elementPosition.second + 1 < matrix[elementPosition.first].size
+            && elementPosition.first < matrix[elementPosition.first].size
             && matrix[elementPosition.first][elementPosition.second + 1].matchesPOI()
             && lastTraversal != LEFT
             && currentElement != POI.VERTICAL_LINE.value
@@ -298,5 +316,5 @@ enum class POI(val value: Char) {
     START(value = '@'),
     END(value = 'x'),
     HORIZONTAL_LINE('-'),
-    VERTICAL_LINE('|'),
+    VERTICAL_LINE('|')
 }
