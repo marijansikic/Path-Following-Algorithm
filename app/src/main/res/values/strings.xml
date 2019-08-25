@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Path Following Algorithm</string>
+    <string name="algorithm_path">Algorithm path is: %1s</string>
+    <string name="letters_path">Letters in algorithm are: %1s</string>
+    <string name="choose_source">Choose ascii map</string>
+    <string name="dialog_title">Select ASCII map</string>
+    <string name="invalid_format">The format is invalid, or algorithm can not process it</string>
+</resources>
