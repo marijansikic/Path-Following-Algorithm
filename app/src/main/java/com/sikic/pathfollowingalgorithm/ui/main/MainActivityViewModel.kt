@@ -1,10 +1,12 @@
-package com.sikic.pathfollowingalgorithm
+package com.sikic.pathfollowingalgorithm.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.sikic.pathfollowingalgorithm.Traversal.*
+import com.sikic.pathfollowingalgorithm.*
+import com.sikic.pathfollowingalgorithm.data.MapRepository
+import com.sikic.pathfollowingalgorithm.ui.main.Traversal.*
 
 class MainActivityViewModel : ViewModel(), Observer<String> {
 
@@ -284,3 +286,17 @@ class MainActivityViewModel : ViewModel(), Observer<String> {
     }
 }
 
+enum class Traversal(val value: String) {
+    UP("UP"),
+    DOWN("DOWN"),
+    LEFT("LEFT"),
+    RIGHT("RIGHT"),
+    START("START")
+}
+
+enum class POI(val value: Char) {
+    START(value = '@'),
+    END(value = 'x'),
+    HORIZONTAL_LINE('-'),
+    VERTICAL_LINE('|'),
+}

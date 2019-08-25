@@ -1,4 +1,4 @@
-package com.sikic.pathfollowingalgorithm
+package com.sikic.pathfollowingalgorithm.ui.main
 
 import android.app.Activity
 import android.content.Intent
@@ -8,7 +8,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.sikic.pathfollowingalgorithm.AsciiMapType.*
+import com.sikic.pathfollowingalgorithm.shared.AsciiMapType.*
+import com.sikic.pathfollowingalgorithm.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val READ_REQUEST_CODE: Int = 10

@@ -1,5 +1,7 @@
 package com.sikic.pathfollowingalgorithm
 
+import com.sikic.pathfollowingalgorithm.shared.AsciiMapType
+import com.sikic.pathfollowingalgorithm.ui.main.MainActivityState
 import junit.framework.Assert.assertEquals
 import org.hamcrest.MatcherAssert
 import org.hamcrest.core.IsInstanceOf

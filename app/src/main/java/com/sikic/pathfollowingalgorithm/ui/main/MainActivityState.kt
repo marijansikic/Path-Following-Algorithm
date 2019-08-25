@@ -1,4 +1,4 @@
-package com.sikic.pathfollowingalgorithm
+package com.sikic.pathfollowingalgorithm.ui.main
 
 sealed class MainActivityState {
 

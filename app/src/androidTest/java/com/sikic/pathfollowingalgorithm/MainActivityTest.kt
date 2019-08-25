@@ -9,6 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
+import com.sikic.pathfollowingalgorithm.ui.main.MainActivity
 import org.hamcrest.Matchers.anything
 import org.hamcrest.Matchers.containsString
 import org.junit.Rule

@@ -1,13 +1,15 @@
-package com.sikic.pathfollowingalgorithm
+package com.sikic.pathfollowingalgorithm.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.sikic.pathfollowingalgorithm.shared.AsciiMapType
 
 object MapRepository {
 
     private val mutableLiveData = MutableLiveData<String>()
 
-    val liveData: LiveData<String> = mutableLiveData
+    val liveData: LiveData<String> =
+        mutableLiveData
 
     private const val asciiMap1 =
                 "    @---A---+\n" +
@@ -55,10 +57,14 @@ object MapRepository {
     fun fetchMap(mapType: String) {
 
         when (mapType) {
-            AsciiMapType.MAP1.value -> mutableLiveData.value = asciiMap1
-            AsciiMapType.MAP2.value -> mutableLiveData.value = asciiMap2
-            AsciiMapType.MAP3.value -> mutableLiveData.value = asciiMap3
-            AsciiMapType.MAP4.value -> mutableLiveData.value = asciiMap4
+            AsciiMapType.MAP1.value -> mutableLiveData.value =
+                asciiMap1
+            AsciiMapType.MAP2.value -> mutableLiveData.value =
+                asciiMap2
+            AsciiMapType.MAP3.value -> mutableLiveData.value =
+                asciiMap3
+            AsciiMapType.MAP4.value -> mutableLiveData.value =
+                asciiMap4
             else -> readFileFromUri(mapType)
         }
     }
